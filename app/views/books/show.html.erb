@@ -27,6 +27,40 @@
               <%= link_to 'Destroy', @book, method: :delete, data: { confirm: '本当に消しますか？' }, class: "btn btn-sm btn-danger"%>
               <% end %>
             </td>
+            <td>
+            <% if @book.favorited_by?(current_user) %>
+            <%= link_to book_favorite_path(@book), method: :delete do %>
+            ♥<%= @book.favorites.count %>
+            <% end %>
+            <% else %>
+            <%= link_to book_favorite_path(@book, method: :post do %>
+            ♡<%= @book.favorites.count %>
+            <% end %>
+            <% end %>
+            </td>
+            <td>
+              コメント数：<%= @book.book_comments.count %>
+            </td>
+        </tr>
+        <tr>
+          <% @book.book_comments.each do |book_comment| %>
+           <td><%= link_to(@book.user) do %>
+              <%= image_tag book_comment.user.get_profile_image, size:"100x100" %><br>
+              <%= book_comment.user.name %>
+              <% end %>
+           </td>
+           <td>
+           <% if @book.user == current_user %>
+              <%= link_to 'Destroy', @book, method: :delete, class: "btn btn-sm btn-danger"%>
+              <% end %>
+           </td>
+           <td>
+             <%= form_with model: [@book, @book_comment] do |f| %>
+             <%= f.text_area :comment, 'col-md-8 offset-md-1' %>
+             <%= f.submit "送信" %>
+             <% end %>
+           </td>
+           <% end %>
         </tr>
       </table>
     </div>
